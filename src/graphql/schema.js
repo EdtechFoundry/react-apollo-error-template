@@ -1,29 +1,34 @@
 import {
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLID,
-  GraphQLString,
-  GraphQLList,
-  GraphQLInt,
-  GraphQLNonNull,
+    GraphQLSchema,
+    GraphQLObjectType,
+    GraphQLID,
+    GraphQLString,
+    GraphQLList,
+    GraphQLInt,
+    GraphQLNonNull
 } from 'graphql';
 
 const MessageType = new GraphQLObjectType({
     name: 'Message',
     fields: {
-        id: { type: GraphQLID },
-        text: { type: GraphQLString },
+        id: {type: GraphQLID},
+        text: {type: GraphQLString},
     },
 });
 
 const PersonType = new GraphQLObjectType({
-  name: 'Person',
-  fields: {
-    id: { type: GraphQLID },
-    name: { type: GraphQLString },
-    likes: { type: GraphQLInt },
-    messages: { type: new GraphQLList(MessageType)},
-  },
+    name: 'Person',
+    fields: {
+        id: {type: GraphQLID},
+        name: {type: GraphQLString},
+        likes: {type: GraphQLInt},
+        messages: {
+            args: {
+                limit: {type: GraphQLInt},
+            },
+            type: new GraphQLList(MessageType)
+        },
+    },
 });
 
 const messageData = [
@@ -39,30 +44,30 @@ const peopleData = [
 ];
 
 const QueryType = new GraphQLObjectType({
-  name: 'Query',
-  fields: {
-    people: {
-      type: new GraphQLList(PersonType),
-        resolve: () => {
-            return peopleData.map(person => {
-                const {messages, ...otherProps} = person;
-                return {
-                    messages: messages.slice(0, 1),
-                    ...otherProps,
-                };
-            });
+    name: 'Query',
+    fields: {
+        people: {
+            type: new GraphQLList(PersonType),
+            resolve: () => {
+                return peopleData.map(person => {
+                    const {messages, ...otherProps} = person;
+                    return {
+                        messages: messages.slice(0, 1),
+                        ...otherProps,
+                    };
+                });
+            }
+        },
+        person: {
+            args: {
+                personId: {type: new GraphQLNonNull(GraphQLInt)}
+            },
+            type: PersonType,
+            resolve: (_empty, args) => {
+                return peopleData[args.personId];
+            }
         }
     },
-    person: {
-      args: {
-        personId: {type: new GraphQLNonNull(GraphQLInt)}
-      },
-      type: PersonType,
-      resolve: (_empty, args) => {
-        return peopleData[args.personId];
-      }
-    }
-  },
 });
 
-export const schema = new GraphQLSchema({ query: QueryType });
+export const schema = new GraphQLSchema({query: QueryType});

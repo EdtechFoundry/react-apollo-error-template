@@ -74,7 +74,7 @@ export default graphql(
         query getAllPeople {
             people {
                 id
-                latestMessage: messages {
+                latestMessage: messages(limit: 1) {
                     id
                     text
                 }

@@ -46,7 +46,7 @@ export default graphql(
             person(personId: $personId) {
                 id
                 ...people_detailed
-                messages {
+                messages(limit: 5) {
                     id
                     text
                 }
