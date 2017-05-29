@@ -42,7 +42,7 @@ class App extends Component {
               {people.map(person => (
                   <li key={person.id}>
                     <p>{person.name}</p>
-                    <p>{person.messages[0].text}</p>
+                    <p>{person.latestMessage[0].text}</p>
                     <button onClick={() => {
                         this.setState({selectedPerson: person.id});
                       }
@@ -74,7 +74,7 @@ export default graphql(
         query getAllPeople {
             people {
                 id
-                messages {
+                latestMessage: messages {
                     id
                     text
                 }
