@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { gql, graphql } from 'react-apollo';
 import PersonDetails from './personDetails';
+import {client} from './index';
 
 class App extends Component {
 
@@ -9,6 +10,10 @@ class App extends Component {
     this.state = {
       selectedPerson: 0,
     }
+  }
+
+  addLike(id) {
+    client.readFragment();
   }
 
   render() {
@@ -41,6 +46,9 @@ class App extends Component {
                         this.setState({selectedPerson: person.id});
                       }
                     }>Select</button>
+                    <button onClick={() => this.addLike(person.id)}>
+                      Add like
+                    </button>
                   </li>
               ))}
             </ul>
@@ -52,11 +60,22 @@ class App extends Component {
   }
 }
 
+export const fragments = {
+    simple: gql`
+        fragment people_simple on Person {
+            name
+        }
+    `,
+};
+
 export default graphql(
-  gql`{
-    people {
-      id
-      name
-    }
-  }`,
+    gql`
+        query getAllPeople {
+            people {
+                id
+                ...people_simple
+            }
+        }
+        ${fragments.simple}
+    `,
 )(App)

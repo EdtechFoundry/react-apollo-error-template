@@ -23,15 +23,24 @@ class PersonDetails extends Component {
     }
 }
 
+export const fragments = {
+    detailed: gql`
+        fragment people_detailed on Person {
+            name
+            likes
+        }
+    `,
+};
+
 export default graphql(
     gql`
         query getPersonDetails($personId: Int!) {
             person(personId: $personId) {
                 id
-                name
-                likes
+                ...people_detailed
             }
         }
+        ${fragments.detailed}
     `, {
         options(ownProps) {
            return {

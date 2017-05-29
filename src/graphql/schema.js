@@ -13,7 +13,7 @@ const PersonType = new GraphQLObjectType({
   fields: {
     id: { type: GraphQLID },
     name: { type: GraphQLString },
-    likes: { type: GraphQLInt }
+    likes: { type: GraphQLInt },
   },
 });
 
