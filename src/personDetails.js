@@ -15,6 +15,14 @@ class PersonDetails extends Component {
                             <li>id: {person.id}</li>
                             <li>name: {person.name}</li>
                             <li>likes: {person.likes}</li>
+                            <li>
+                                <ul>
+                                    {person.messages.map(message => (
+                                        <li key={message.id}>{message.text}</li>
+                                    ))}
+
+                                </ul>
+                            </li>
                         </ul>
                     )}
                 </div>
@@ -38,6 +46,10 @@ export default graphql(
             person(personId: $personId) {
                 id
                 ...people_detailed
+                messages {
+                    id
+                    text
+                }
             }
         }
         ${fragments.detailed}

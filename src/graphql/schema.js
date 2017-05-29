@@ -8,19 +8,34 @@ import {
   GraphQLNonNull,
 } from 'graphql';
 
+const MessageType = new GraphQLObjectType({
+    name: 'Message',
+    fields: {
+        id: { type: GraphQLID },
+        text: { type: GraphQLString },
+    },
+});
+
 const PersonType = new GraphQLObjectType({
   name: 'Person',
   fields: {
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     likes: { type: GraphQLInt },
+    messages: { type: new GraphQLList(MessageType)},
   },
 });
 
+const messageData = [
+    {id: 0, text: 'Hi'},
+    {id: 1, text: 'There'},
+    {id: 2, text: 'You!'},
+];
+
 const peopleData = [
-  { id: 0, name: 'John Smith', likes: 0},
-  { id: 1, name: 'Sara Smith', likes: 0},
-  { id: 2, name: 'Budd Deey', likes: 0},
+    {id: 0, name: 'John Smith', likes: 0, messages: messageData},
+    {id: 1, name: 'Sara Smith', likes: 0, messages: messageData},
+    {id: 2, name: 'Budd Deey', likes: 0, messages: messageData},
 ];
 
 const QueryType = new GraphQLObjectType({
@@ -28,7 +43,15 @@ const QueryType = new GraphQLObjectType({
   fields: {
     people: {
       type: new GraphQLList(PersonType),
-      resolve: () => peopleData,
+        resolve: () => {
+            return peopleData.map(person => {
+                const {messages, ...otherProps} = person;
+                return {
+                    messages: messages.slice(0, 1),
+                    ...otherProps,
+                };
+            });
+        }
     },
     person: {
       args: {
