@@ -1,7 +1,16 @@
 import React, { Component } from 'react';
 import { gql, graphql } from 'react-apollo';
+import PersonDetails from './personDetails';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedPerson: 0,
+    }
+  }
+
   render() {
     const { data: { loading, people } } = this.props;
     return (
@@ -23,13 +32,20 @@ class App extends Component {
         {loading ? (
           <p>Loading…</p>
         ) : (
-          <ul>
-            {people.map(person => (
-              <li key={person.id}>
-                {person.name}
-              </li>
-            ))}
-          </ul>
+          <div>
+            <ul>
+              {people.map(person => (
+                  <li key={person.id}>
+                    <p>{person.name}</p>
+                    <button onClick={() => {
+                        this.setState({selectedPerson: person.id});
+                      }
+                    }>Select</button>
+                  </li>
+              ))}
+            </ul>
+            <PersonDetails personId={this.state.selectedPerson}/>
+          </div>
         )}
       </main>
     );
